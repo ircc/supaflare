@@ -25,6 +25,9 @@ jobs:
           node-version: '18.x'
           cache: 'npm'
           cache-dependency-path: '${{ github.workspace }}/package-lock.json'
+      # 添加安装 patch-package 的步骤
+      - name: Install patch-package
+        run: npm install -g patch-package
       - name: Install dependencies
         run: npm install
       - name: Install latest Wrangler
