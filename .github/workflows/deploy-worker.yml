@@ -9,40 +9,33 @@ on:
       - worker/**
       - .github/workflows/deploy-worker.yml
 
+defaults:
+  run:
+    working-directory: worker
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy Worker
     steps:
       - uses: actions/checkout@v3
-      
-      # 修改 package.json 移除 postinstall 脚本
-      - name: Temporarily modify package.json
-        run: |
-          if [ -f "package.json" ]; then
-            sed -i 's/"postinstall": "patch-package"/"postinstall": "echo Skipping patch-package"/g' package.json
-          fi
-        working-directory: ${{ github.workspace }}
-      
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18.x'
           cache: 'npm'
-          cache-dependency-path: '${{ github.workspace }}/worker/package-lock.json'
-      
+          cache-dependency-path: '${{ github.workspace }}/package-lock.json'
+      # 添加安装 patch-package 的步骤
+      - name: Install patch-package
+        run: npm install -g patch-package
       - name: Install dependencies
         run: npm install
-        working-directory: worker
-      
       - name: Install latest Wrangler
-        run: npm install -g wrangler@latest
-        working-directory: worker
-      
+        run: |
+          npm install -g wrangler@latest
       - name: Add mask
-        run: echo "::add-mask::${{ secrets.MASK_WORKER_URL }}"
-        working-directory: worker
-      
+        run: |
+          echo "::add-mask::${{ secrets.MASK_WORKER_URL }}"
       - name: Publish to Cloudflare Workers
         uses: cloudflare/wrangler-action@3.0.0
         with:
