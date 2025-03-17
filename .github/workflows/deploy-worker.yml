@@ -23,13 +23,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.x'
-      - run: npm install
+      - name: Clean npm cache
+        run: npm cache clean --force
+      - name: Install dependencies
+        run: npm install
       - name: Add mask
         run: |
           echo "::add-mask::${{ secrets.MASK_WORKER_URL }}"
       - name: Publish to Cloudflare Workers
         uses: cloudflare/wrangler-action@2.0.0
         with:
+          wranglerVersion: '4.0.0'  # 或更新的版本
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "worker"
           secrets: |
