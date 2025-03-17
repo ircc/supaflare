@@ -27,6 +27,9 @@ jobs:
           cache-dependency-path: '${{ github.workspace }}/package-lock.json'
       - name: Install dependencies
         run: npm install
+      - name: Install latest Wrangler
+        run: |
+          npm install -g wrangler@latest
       - name: Add mask
         run: |
           echo "::add-mask::${{ secrets.MASK_WORKER_URL }}"
@@ -35,6 +38,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "worker"
+          command: deploy
           secrets: |
             SUPABASE_URL
             SUPABASE_API_KEY
