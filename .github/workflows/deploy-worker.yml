@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'npm'
-          cache-dependency-path: 'worker/package-lock.json'
+          cache-dependency-path: '${{ github.workspace }}/package-lock.json'
       - name: Install dependencies
         run: npm install
       - name: Add mask
